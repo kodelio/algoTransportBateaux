@@ -1,6 +1,7 @@
 package util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Transport {
     private List<Bateau> bateauxStart = new ArrayList<>();
@@ -55,6 +56,21 @@ public class Transport {
         return bateauxStart;
     }
 
+    public List<Bateau> clone(int startOrEnd) {
+        List<Bateau> nL = new ArrayList<>();
+        if (startOrEnd == 1) {
+            for (int i = 0; i < this.bateauxStart.size(); i++) {
+                nL.add(this.bateauxStart.get(i));
+            }
+        }
+        else {
+            for (int i = 0; i < this.bateauxEnd.size(); i++) {
+                nL.add(this.bateauxEnd.get(i));
+            }
+        }
+        return nL;
+    }
+
     public void setBateauxStart(List<Bateau> bateauxStart) {
         this.bateauxStart = bateauxStart;
     }
@@ -85,38 +101,35 @@ public class Transport {
         }
     }
 
-    public void mouvementsPossibles() {
+    public Map<Transport, Transport> mouvementsPossibles() {
 
         Map<Transport, Transport> movable = new HashMap<>();
 
         Transport eI = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
+        Transport eF = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
 
-        if (eI.getProtectionTeam() == 1) {
-            Map<Bateau, Bateau> al = new HashMap<>();
-            for (Bateau b : eI.getBateauxStart()) {
-                for (Bateau bat : eI.getBateauxStart()) {
-                    if (!b.equals(bat)) {
-                        al.put(b, bat);
-                    }
+        List<List<Bateau>> lb = new ArrayList<>();
+        List<Bateau> toMergeWith = eF.clone(getProtectionTeam());
+
+        for (Bateau b : eF.clone(getProtectionTeam())) {
+            for (Bateau bat : toMergeWith) {
+                if (!b.equals(bat)) {
+                    List<Bateau> convoi = new ArrayList<>();
+                    convoi.add(b);
+                    convoi.add(bat);
+                    lb.add(convoi);
                 }
             }
-            createMap(al);
-            //movable.put(eI, );
+            toMergeWith.remove(b);
         }
-    }
 
-    public static <K, V> Map<K, V> createMap(Map<K, V> m) {
-        Map<K, V> map = new HashMap<K, V>();
-        Map<V, K> tmpMap = new HashMap<V, K>();
-        for(Map.Entry<K, V> entry : m.entrySet()) {
-            if (!tmpMap.containsKey(entry.getValue())) {
-                tmpMap.put(entry.getValue(), entry.getKey());
-            }
+        for (List<Bateau> lB : lb) {
+            Transport eTemp = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
+            eTemp.move(lB, getProtectionTeam());
+            movable.put(eI, eTemp);
         }
-        for(Map.Entry<V, K> entry : tmpMap.entrySet()) {
-            map.put(entry.getValue(), entry.getKey());
-        }
-        return map;
+
+        return movable;
     }
 
     public void move(List<Bateau> bateaux, int sens) {

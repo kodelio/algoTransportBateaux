@@ -1,7 +1,5 @@
 package util;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 public class Bateau {
     private String name;
     private int time;

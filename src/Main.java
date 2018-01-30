@@ -42,6 +42,10 @@ public class Main {
 
         List<Transport> etatsVisited = new ArrayList<>();
 
+        while(!queueState.isEmpty()) {
+
+        }
+
         return etatSol;
     }
 
