@@ -62,8 +62,7 @@ public class Transport {
             for (int i = 0; i < this.bateauxStart.size(); i++) {
                 nL.add(this.bateauxStart.get(i));
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < this.bateauxEnd.size(); i++) {
                 nL.add(this.bateauxEnd.get(i));
             }

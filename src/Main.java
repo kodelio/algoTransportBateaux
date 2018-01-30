@@ -27,26 +27,43 @@ public class Main {
 
         //transport.move(toMove, 1);
         //transport.display();
-        transport.mouvementsPossibles();
+        //transport.mouvementsPossibles();
+        calcul(transport);
     }
 
-    public static Transport calcul(Transport transport) throws Exception {
+    public static Transport calcul(Transport transportInitial) {
 
         Transport etatSol = solution();
+        Set<Transport> queueState = new HashSet<>();
+        Map<Transport, Integer> dist = new HashMap<>();
+        Map<Transport, Transport> sp = new HashMap<>();
 
-        // Creation of the queue of state
-        Queue<Transport> queueState = new ArrayDeque<>();
+        dist.put(transportInitial, 0);
+        queueState.add(transportInitial);
 
-        // Creation of the map of predecessor
-        Map<Transport, Transport> predecessors = new HashMap<>();
-
-        List<Transport> etatsVisited = new ArrayList<>();
-
-        while(!queueState.isEmpty()) {
-
+        while (!queueState.isEmpty()) {
+            Transport petit = queueState.stream().min((t, v) -> Integer.compare(dist.get(t),dist.get(v))).get();
+            petit.display();
+            queueState.remove(petit);
+            for (Map.Entry<Transport, Transport> entry : petit.mouvementsPossibles().entrySet())
+            {
+                Integer ndist = dist.get(entry.getValue()) + cost(petit, entry.getValue());
+                if (dist.get(entry.getValue()) == null) {
+                    queueState.add(entry.getValue());
+                    dist.put(entry.getValue(), -1);
+                }
+                if (ndist > dist.get(entry.getValue())) {
+                    dist.put(entry.getValue(), ndist);
+                    sp.put(entry.getValue(), petit);
+                }
+            }
         }
 
         return etatSol;
+    }
+
+    private static Integer cost(Transport value, Transport petit) {
+
     }
 
     public static Transport solution() {
