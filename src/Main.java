@@ -21,17 +21,13 @@ public class Main {
         Transport transport = new Transport(bateaux, true);
         transport.display();
 
-        List<Bateau> toMove = new ArrayList<>();
-        toMove.add(bat1);
-        toMove.add(bat2);
+        cost(transport, solution());
 
-        //transport.move(toMove, 1);
-        //transport.display();
-        //transport.mouvementsPossibles();
-        calcul(transport);
+        // TODO equals pour les états (Transport)
+
     }
 
-    public static Transport calcul(Transport transportInitial) {
+    private static Transport calcul(Transport transportInitial) {
 
         Transport etatSol = solution();
         Set<Transport> queueState = new HashSet<>();
@@ -42,12 +38,13 @@ public class Main {
         queueState.add(transportInitial);
 
         while (!queueState.isEmpty()) {
-            Transport petit = queueState.stream().min((t, v) -> Integer.compare(dist.get(t),dist.get(v))).get();
-            petit.display();
+            // On récupère le transport (l'état) le plus proche dans la queue
+            Transport petit = queueState.stream().min((t, v) -> Integer.compare(dist.get(t), dist.get(v))).get();
             queueState.remove(petit);
-            for (Map.Entry<Transport, Transport> entry : petit.mouvementsPossibles().entrySet())
-            {
-                Integer ndist = dist.get(entry.getValue()) + cost(petit, entry.getValue());
+            // On récupère les mouvements possibles pour l'état le plus proche
+            for (Map.Entry<Transport, Transport> entry : petit.mouvementsPossibles().entrySet()) {
+                int ndist = dist.get(petit) + cost(petit, entry.getValue());
+                // on ne l'a pas visité
                 if (dist.get(entry.getValue()) == null) {
                     queueState.add(entry.getValue());
                     dist.put(entry.getValue(), -1);
@@ -58,15 +55,29 @@ public class Main {
                 }
             }
         }
-
         return etatSol;
     }
 
-    private static Integer cost(Transport value, Transport petit) {
+    // TODO demander au prof si je suis sur la bonne voie
+    private static int cost(Transport eI, Transport eF) {
+//        Collection firstList = eI.getBateauxStart();
+//        Collection secondList = eF.getBateauxStart();
+//
+//        for (int i = 0; i < firstList.toArray().length; i++) {
+//            firstList
+//        }
+//
+//        System.out.println("First List: " + firstList);
+//        System.out.println("Second List: " + secondList);
+//
+//        secondList.removeAll(firstList);
+//
+//        System.out.println("Result: " + secondList);
 
+        return 1;
     }
 
-    public static Transport solution() {
+    private static Transport solution() {
         List<Bateau> bateauxSol = new ArrayList<>();
 
         bateauxSol.add(new Bateau("XC21", 45));

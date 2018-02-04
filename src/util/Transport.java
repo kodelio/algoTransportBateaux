@@ -1,7 +1,9 @@
 package util;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Transport {
     private List<Bateau> bateauxStart = new ArrayList<>();
@@ -114,6 +116,7 @@ public class Transport {
             for (Bateau bat : toMergeWith) {
                 if (!b.equals(bat)) {
                     List<Bateau> convoi = new ArrayList<>();
+                    // TODO pour le retour il faut renvoyer qu'un seul bateau
                     convoi.add(b);
                     convoi.add(bat);
                     lb.add(convoi);
