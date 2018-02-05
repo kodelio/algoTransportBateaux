@@ -32,25 +32,25 @@ public class Main {
 
         while (!queueState.isEmpty()) {
             // On récupère le transport (l'état) le plus proche dans la queue
-            Transport etat = queueState.stream().min((t, v) -> Integer.compare(dist.get(t), dist.get(v))).get();
-            queueState.remove(etat);
-            visited.add(etat);
-            etat.display();
-            if (etat.equals(etatSol)) {
+            Transport current = queueState.stream().min((t, v) -> Integer.compare(dist.get(t), dist.get(v))).get();
+            queueState.remove(current);
+            visited.add(current);
+            current.display();
+            if (current.equals(etatSol)) {
                 break;
             }
             // On récupère les mouvements possibles pour l'état le plus proche
-            for (Transport next : etat.mouvementsPossibles()) {
+            for (Transport next : current.mouvementsPossibles()) {
                 if (!visited.contains(next)) {
-                    int ndist = dist.get(etat) + next.getCost();
+                    int ndist = dist.get(current) + next.getCost();
                     // on ne l'a pas visité
                     if (dist.get(next) == null) {
                         queueState.add(next);
                         dist.put(next, ndist);
-                        sp.put(next, etat);
+                        sp.put(next, current);
                     } else if (ndist < dist.get(next)) {
                         dist.put(next, ndist);
-                        sp.put(next, etat);
+                        sp.put(next, current);
                     }
                 }
             }

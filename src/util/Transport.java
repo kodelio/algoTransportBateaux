@@ -96,6 +96,7 @@ public class Transport {
         if (this.protectionTeam == 2) {
             System.out.println("PROTECTION TEAM A DROITE");
         }
+        System.out.println("*****************************************************************");
     }
 
     public Set<Transport> mouvementsPossibles() {
