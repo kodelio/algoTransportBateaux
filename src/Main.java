@@ -35,7 +35,7 @@ public class Main {
             Transport etat = queueState.stream().min((t, v) -> Integer.compare(dist.get(t), dist.get(v))).get();
             queueState.remove(etat);
             visited.add(etat);
-            //etat.display();
+            etat.display();
             if (etat.equals(etatSol)) {
                 break;
             }
