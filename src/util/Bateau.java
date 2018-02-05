@@ -1,12 +1,10 @@
 package util;
 
-public class Bateau {
-    private String name;
-    private int time;
+import java.util.Objects;
 
-    public Bateau() {
-        // Empty constructor
-    }
+public class Bateau {
+    private final String name;
+    private final int time;
 
     public Bateau(String name, int time) {
         this.name = name;
@@ -17,25 +15,22 @@ public class Bateau {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getTime() {
         return time;
     }
 
-    public void setTime(int time) {
-        this.time = time;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bateau bateau = (Bateau) o;
+        return time == bateau.time &&
+                Objects.equals(name, bateau.name);
     }
 
-    public void copy(Bateau bat) {
-        this.name = bat.getName();
-        this.time = bat.getTime();
-    }
+    @Override
+    public int hashCode() {
 
-    public Boolean equals(Bateau bat) {
-        if (this.getTime() == bat.getTime() && this.getName().equals(bat.getName())) return true;
-        return false;
+        return Objects.hash(name, time);
     }
 }

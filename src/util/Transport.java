@@ -1,14 +1,27 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Transport {
-    private List<Bateau> bateauxStart = new ArrayList<>();
-    private List<Bateau> bateauxEnd = new ArrayList<>();
+    private Set<Bateau> bateauxStart = new HashSet<>();
+    private Set<Bateau> bateauxEnd = new HashSet<>();
     private int protectionTeam;
+    private int cost;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transport transport = (Transport) o;
+        return protectionTeam == transport.protectionTeam &&
+                Objects.equals(bateauxStart, transport.bateauxStart) &&
+                Objects.equals(bateauxEnd, transport.bateauxEnd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bateauxStart, bateauxEnd, protectionTeam);
+    }
 
     public int getProtectionTeam() {
         return protectionTeam;
@@ -24,146 +37,111 @@ public class Transport {
         this.bateauxStart.add(new Bateau("XC100", 225));
         this.bateauxStart.add(new Bateau("XC800", 360));
         this.protectionTeam = 1;
+        this.cost = 0;
     }
 
-    public Transport(List<Bateau> bateaux, boolean startOrEnd) {
-        for (int i = 0; i < bateaux.size(); i++) {
-            Bateau bat = new Bateau();
-            bat.copy(bateaux.get(i));
+    public Transport(Set<Bateau> bateaux, boolean startOrEnd) {
+        for (Bateau b : bateaux) {
             if (startOrEnd) {
                 this.protectionTeam = 1;
-                this.bateauxStart.add(bat);
+                this.bateauxStart.add(b);
             } else {
                 this.protectionTeam = 2;
-                this.bateauxEnd.add(bat);
+                this.bateauxEnd.add(b);
             }
         }
     }
 
-    public Transport(List<Bateau> bateauxStart, List<Bateau> bateauxEnd, int protectionTeam) {
-        for (int i = 0; i < bateauxStart.size(); i++) {
-            Bateau bat = new Bateau();
-            bat.copy(bateauxStart.get(i));
-            this.bateauxStart.add(bat);
+    public Transport(Set<Bateau> bateauxStart, Set<Bateau> bateauxEnd, int protectionTeam, int cost) {
+        for (Bateau b : bateauxStart) {
+            this.bateauxStart.add(b);
         }
-        for (int i = 0; i < bateauxEnd.size(); i++) {
-            Bateau bat = new Bateau();
-            bat.copy(bateauxEnd.get(i));
-            this.bateauxEnd.add(bat);
+        for (Bateau b : bateauxEnd) {
+            this.bateauxEnd.add(b);
         }
         this.protectionTeam = protectionTeam;
+        this.cost = cost;
     }
 
-    public List<Bateau> getBateauxStart() {
+    public Set<Bateau> getBateauxStart() {
         return bateauxStart;
     }
 
-    public List<Bateau> clone(int startOrEnd) {
-        List<Bateau> nL = new ArrayList<>();
-        if (startOrEnd == 1) {
-            for (int i = 0; i < this.bateauxStart.size(); i++) {
-                nL.add(this.bateauxStart.get(i));
-            }
-        } else {
-            for (int i = 0; i < this.bateauxEnd.size(); i++) {
-                nL.add(this.bateauxEnd.get(i));
-            }
-        }
-        return nL;
-    }
-
-    public void setBateauxStart(List<Bateau> bateauxStart) {
+    public void setBateauxStart(Set<Bateau> bateauxStart) {
         this.bateauxStart = bateauxStart;
     }
 
-    public List<Bateau> getBateauxEnd() {
+    public Set<Bateau> getBateauxEnd() {
         return bateauxEnd;
     }
 
-    public void setBateauxEnd(List<Bateau> bateauxEnd) {
+    public void setBateauxEnd(Set<Bateau> bateauxEnd) {
         this.bateauxEnd = bateauxEnd;
     }
 
     public void display() {
-        System.out.println("--------------------- DEBUT ---------------------");
-        for (int i = 0; i < this.bateauxStart.size(); i++) {
-            System.out.println(this.bateauxStart.get(i).getName() + " --- " + this.bateauxStart.get(i).getTime());
+        System.out.println("--------------------- GAUCHE ---------------------");
+
+        for (Bateau b : this.getBateauxStart()) {
+            System.out.println(b.getName() + " --- " + b.getTime());
         }
         if (this.protectionTeam == 1) {
-            System.out.println("PROTECTION TEAM");
+            System.out.println("PROTECTION TEAM A GAUCHE");
         }
 
-        System.out.println("---------------------- FIN ----------------------");
-        for (int i = 0; i < this.bateauxEnd.size(); i++) {
-            System.out.println(this.bateauxEnd.get(i).getName() + " --- " + this.bateauxEnd.get(i).getTime());
+        System.out.println("--------------------- DROITE ---------------------");
+        for (Bateau b : this.getBateauxEnd()) {
+            System.out.println(b.getName() + " --- " + b.getTime());
         }
         if (this.protectionTeam == 2) {
-            System.out.println("PROTECTION TEAM");
+            System.out.println("PROTECTION TEAM A DROITE");
         }
     }
 
-    public Map<Transport, Transport> mouvementsPossibles() {
+    public Set<Transport> mouvementsPossibles() {
 
-        Map<Transport, Transport> movable = new HashMap<>();
+        Set<Transport> movable = new HashSet<>();
 
-        Transport eI = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
-        Transport eF = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
-
-        List<List<Bateau>> lb = new ArrayList<>();
-        List<Bateau> toMergeWith = eF.clone(getProtectionTeam());
-
-        for (Bateau b : eF.clone(getProtectionTeam())) {
-            for (Bateau bat : toMergeWith) {
-                if (!b.equals(bat)) {
-                    List<Bateau> convoi = new ArrayList<>();
-                    // TODO pour le retour il faut renvoyer qu'un seul bateau
-                    convoi.add(b);
-                    convoi.add(bat);
-                    lb.add(convoi);
+        if (this.protectionTeam == 2) {
+            Bateau batFast = null;
+            for (Bateau b : this.getBateauxEnd()) {
+                if (batFast == null || b.getTime() < batFast.getTime()) {
+                    batFast = b;
                 }
             }
-            toMergeWith.remove(b);
-        }
+            Transport etat = new Transport(this.getBateauxStart(), this.getBateauxEnd(), this.getProtectionTeam(), this.getCost());
+            etat.setProtectionTeam(1);
+            etat.setCost(batFast.getTime());
+            etat.getBateauxEnd().remove(batFast);
+            etat.getBateauxStart().add(batFast);
+            movable.add(etat);
+        } else {
+            List<Bateau> list = new ArrayList<>();
+            list.addAll(this.getBateauxStart());
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = i + 1; j < list.size(); j++) {
+                    Bateau b1 = list.get(i);
+                    Bateau b2 = list.get(j);
 
-        for (List<Bateau> lB : lb) {
-            Transport eTemp = new Transport(getBateauxStart(), getBateauxEnd(), getProtectionTeam());
-            eTemp.move(lB, getProtectionTeam());
-            movable.put(eI, eTemp);
+                    Transport etat = new Transport(this.getBateauxStart(), this.getBateauxEnd(), this.getProtectionTeam(), this.getCost());
+                    etat.setProtectionTeam(2);
+                    etat.setCost(Math.max(b1.getTime(), b2.getTime()));
+                    etat.getBateauxEnd().add(b1);
+                    etat.getBateauxEnd().add(b2);
+                    etat.getBateauxStart().remove(b1);
+                    etat.getBateauxStart().remove(b2);
+                    movable.add(etat);
+                }
+            }
         }
-
         return movable;
     }
 
-    public void move(List<Bateau> bateaux, int sens) {
-        if (sens == 1) {
-            for (Bateau bat : bateaux) {
-                this.bateauxEnd.add(bat);
+    public int getCost() {
+        return cost;
+    }
 
-                Bateau deleteBat = new Bateau();
-
-                for (Bateau bat2 : this.bateauxStart) {
-                    if (bat2.equals(bat)) {
-                        deleteBat = bat2;
-                    }
-                }
-                this.bateauxStart.remove(deleteBat);
-                this.protectionTeam = 2;
-            }
-        } else {
-            for (Bateau bat : bateaux) {
-                this.bateauxStart.add(bat);
-
-                Bateau deleteBat = new Bateau();
-
-                for (Bateau bat2 : this.bateauxEnd) {
-                    if (bat2.equals(bat)) {
-                        deleteBat = bat2;
-                    }
-                }
-                this.bateauxEnd.remove(deleteBat);
-                this.protectionTeam = 1;
-            }
-        }
-
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 }
