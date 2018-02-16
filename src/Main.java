@@ -37,6 +37,7 @@ public class Main {
             visited.add(current);
             current.display();
             if (current.equals(etatSol)) {
+                System.out.println("Temps en minutes pour déplacer les bateaux : " + dist.get(current));
                 break;
             }
             // On récupère les mouvements possibles pour l'état le plus proche
